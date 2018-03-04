@@ -1,6 +1,6 @@
 # Rush (= Ruby Scheme Interpreter)
 
-def read_input
+def interpreter
   loop do
     print 'rush >> '
     input = gets
@@ -57,5 +57,5 @@ def atom(token)
 end
 
 if __FILE__ == $0
-  read_input
+  interpreter
 end
