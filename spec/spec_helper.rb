@@ -98,3 +98,20 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+def stub_stdout(&block)
+  # escape original STDOUT to original_stdout
+  original_stdout = $stdout
+
+  # set StringIO instance to $stdout
+  $stdout = mock = StringIO.new
+
+  # run argument block
+  yield
+
+  # read its output
+  mock.string.chomp
+ensure
+  # to ensure set $stdout as it should be
+  $stdout = original_stdout
+end
