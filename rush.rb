@@ -103,6 +103,19 @@ def make_global_env(env)
   :- => lambda {|x, y| x - y },
   :* => lambda {|x, y| x * y },
   :/ => lambda {|x, y| x / y },
+  :not => lambda {|x| !x },
+  :< => lambda {|x, y| x < y },
+  :> => lambda {|x, y| x > y },
+  :<= => lambda {|x, y| x <= y },
+  :>= => lambda {|x, y| x >= y },
+  :"=" => lambda {|x, y| x == y },
+  :cons => lambda {|x, y| [x, y] },
+  :car => lambda {|x| x[0] },
+  :cdr => lambda {|x| x[1..-1] },
+  :list => lambda {|*x| [*x] },
+  :list? => lambda {|x| x.is_a?(Array) },
+  :null? => lambda {|x| x.empty? },
+  :symbol? => lambda {|x| x.is_a?(Symbol) },
   })
 end
 
