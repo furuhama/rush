@@ -4,8 +4,14 @@ def read_input
   loop do
     print 'rush >> '
     input = gets
+
+    if input == "quit\n"
+      break
+    end
+
     print parse(input), "\n"
   end
+  print "bye...\n"
 end
 
 def read(s)
