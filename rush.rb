@@ -11,6 +11,7 @@ end
 def read(s)
   read_tokens tokenize(s)
 end
+alias :parse :read
 
 def tokenize(s)
   s.gsub(/[()]/, ' \0 ').split

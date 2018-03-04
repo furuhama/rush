@@ -30,6 +30,16 @@ describe 'Rush' do
     end
   end
 
+  describe '#parse (alias)' do
+    subject { parse string }
+
+    context do
+      let(:string) { "(print (+ 10 12 (* -5.5 8)))" }
+
+      it { is_expected.to eq [:print, [:+, 10, 12, [:*, -5.5, 8]]] }
+    end
+  end
+
   describe '#tokenize' do
     subject { tokenize string }
 
