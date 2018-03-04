@@ -33,23 +33,41 @@ describe 'Rush' do
   describe '#read_tokens' do
     subject { read_tokens tokens }
 
+    context 'just "(" and ")"' do
+      let(:tokens) { ['(', ')'] }
+
+      it { is_expected.to eq [] }
+    end
+
+    context '"(" and something and ")"' do
+      let(:tokens) { ['(', '100', 'hoge', ')'] }
+
+      it { is_expected.to eq ['100', 'hoge'] }
+    end
+
     context 'raise Syntax Error' do
       context 'length == 0' do
         let(:tokens) { [] }
 
-        it { expect { subject }.to raise_error(SyntaxError) }
+        it { expect { subject }.to raise_error(SyntaxError, "unexpected EOF while reading") }
       end
 
       context 'tokens just have "("' do
         let(:tokens) { [')'] }
 
-        it { expect { subject }.to raise_error(SyntaxError) }
+        it { expect { subject }.to raise_error(SyntaxError, 'unexpected ")"') }
       end
 
       context 'tokens start ")"' do
         let(:tokens) { [')', '(', 'hoge', ')', ')'] }
 
-        it { expect { subject }.to raise_error(SyntaxError) }
+        it { expect { subject }.to raise_error(SyntaxError, 'unexpected ")"') }
+      end
+
+      context 'start from "(" but not end with ")"' do
+        let(:tokens) { ['(', 'hoge', 'fuga', '210'] }
+
+        it { expect { subject }.to raise_error(SyntaxError, "unexpected EOF while reading") }
       end
     end
   end
