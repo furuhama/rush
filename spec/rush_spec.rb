@@ -195,6 +195,16 @@ describe 'Rush' do
       it { is_expected.to eq nil }
     end
 
+    context 'define, set!' do
+      it do
+        evaluate [:define, :hoge, 10]
+        expect(evaluate(:hoge)).to eq 10
+
+        evaluate [:set!, :hoge, 65536]
+        expect(evaluate(:hoge)).to eq 65536
+      end
+    end
+
     context 'quote' do
       let(:exps) { [:quote, [1, 2, [:*, 3.7, 10]]] }
 
