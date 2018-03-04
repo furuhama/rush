@@ -119,7 +119,7 @@ def make_global_env(env)
   :>= => lambda {|x, y| x >= y },
   :"=" => lambda {|x, y| x == y },
   :cons => lambda {|x, y| [x, y] },
-  :car => lambda {|x| x[0] },
+  :car => lambda {|x| x[0] }, # it has some bugs
   :cdr => lambda {|x| x[1..-1] },
   :list => lambda {|*x| [*x] },
   :list? => lambda {|x| x.is_a?(Array) },

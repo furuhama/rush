@@ -183,6 +183,18 @@ describe 'Rush' do
       it { is_expected.to eq 53 }
     end
 
+    context 'cons' do
+      let(:exps) { [:cons, 1, 2, [:*, 5, 10]] }
+
+      it { is_expected.to eq [[1, 2], 50] }
+    end
+
+    context 'car, cdr' do
+      let(:exps) { [:car, [1015]] }
+
+      it { is_expected.to eq nil }
+    end
+
     context 'quote' do
       let(:exps) { [:quote, [1, 2, [:*, 3.7, 10]]] }
 
