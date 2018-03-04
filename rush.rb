@@ -103,6 +103,7 @@ def evaluate(x, env=$GLOBAL_ENV)
   end
 end
 
+# this class express which scope program is in
 class Env < Hash
   def initialize(params=[], args=[], outer=nil)
     hash = Hash[params.zip(args)]
