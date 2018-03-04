@@ -4,7 +4,7 @@ def read_input
   loop do
     print 'rush >> '
     input = gets
-    puts input
+    print parse(input), "\n"
   end
 end
 
