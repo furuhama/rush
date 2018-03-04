@@ -127,9 +127,9 @@ describe 'Rush' do
       end
 
       context 'negative' do
-        let(:token) { '-65525' }
+        let(:token) { '-65536' }
 
-        it { is_expected.to eq (-65525) }
+        it { is_expected.to eq (-65536) }
       end
     end
 
