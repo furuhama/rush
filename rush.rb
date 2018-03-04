@@ -5,9 +5,7 @@ def read_input
     print 'rush >> '
     input = gets
 
-    if input == "quit\n"
-      break
-    end
+    break if input == "quit\n"
 
     print parse(input), "\n"
   end
