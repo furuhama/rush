@@ -195,6 +195,27 @@ describe 'Rush' do
       it { is_expected.to eq nil }
     end
 
+    # 落ちる
+    context 'list' do
+      let(:exps) { [:list, 1, 2, 3] }
+
+      it { is_expected.to eq [1, 2, 3] }
+    end
+
+    # 落ちる
+    context 'null?' do
+      let(:exps) { [:null?, [3]] }
+
+      it { is_expected.to eq true }
+    end
+
+    # 落ちる
+    context 'symbol?' do
+      let(:exps) { [:symbol?, 3] }
+
+      it { is_expected.to eq false }
+    end
+
     context 'define, set!' do
       it do
         evaluate [:define, :hoge, 10]
@@ -202,6 +223,15 @@ describe 'Rush' do
 
         evaluate [:set!, :hoge, 65536]
         expect(evaluate(:hoge)).to eq 65536
+      end
+    end
+
+    # lambda うまく動いてない
+    context 'lambda' do
+      it do
+        evaluate [:define, :square, [:lambda, [:n], [:*, :n, :n]]]
+
+        expect(evaluate([:square, 256])).to eq 65536
       end
     end
 

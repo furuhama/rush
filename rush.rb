@@ -70,6 +70,7 @@ def evaluate(x, env=$GLOBAL_ENV)
       # look for $GLOBAL_ENV hash type data
       # and it would find accurate Proc onject
       env.find(x)[x]
+    # ここで rescue しちゃってるけどいいのだろうか
     rescue NoMethodError
       x
     end
@@ -88,13 +89,16 @@ def evaluate(x, env=$GLOBAL_ENV)
     when :set!
       _, var, expr = x
       env.find(var)[var] = evaluate(expr, env)
-    when :lambda # it does not work well
-      _, vars, expr = x
-      lambda { |*args| evaluate(exp, Env.new(vars, args, env)) }
+    # なんかうまく動かない、式関係なくただ変数の値を評価したものが返却される
+    # lambda { |x| x } とおなじ挙動な気がする
+    when :lambda
+      _, vars, l_expr = x
+      lambda { |*args| evaluate(l_expr, Env.new(vars, args, env)) }
     else
       # evaluate recursively
       process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
 
+      # この評価構造が元凶かも(inject だから引数 2 つずつ評価していっちゃう)
       # evaluation
       exps.inject {|m, a| process.call(m, a) }
     end
@@ -112,6 +116,7 @@ class Env < Hash
     @outer = outer
   end
 
+  # このメソッドあってるのかわからん
   def find(key)
     self.has_key?(key) ? self : @outer.find(key)
   end
@@ -130,7 +135,8 @@ def make_global_env(env)
   :>= => lambda {|x, y| x >= y },
   :"=" => lambda {|x, y| x == y },
   :cons => lambda {|x, y| [x, y] },
-  :car => lambda {|x| x[0] }, # it has some bugs
+  # ここから下がうまくうごかない
+  :car => lambda {|x| x[0] },
   :cdr => lambda {|x| x[1..-1] },
   :list => lambda {|*x| [*x] },
   :list? => lambda {|x| x.is_a?(Array) },
