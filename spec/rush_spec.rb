@@ -2,6 +2,34 @@ require 'spec_helper'
 require './rush'
 
 describe 'Rush' do
+  describe '#read' do
+    subject { read string }
+
+    context 'just symbol' do
+      let(:string) { "(hoge)" }
+
+      it { is_expected.to eq [:hoge] }
+    end
+
+    context 'symbol & integer' do
+      let(:string) { "(hoge (10))" }
+
+      it { is_expected.to eq [:hoge, [10]] }
+    end
+
+    context 'symbol & integer & float' do
+      let(:string) { "(hoge (10) 10.5)" }
+
+      it { is_expected.to eq [:hoge, [10], 10.5] }
+    end
+
+    context 'like normal calculation' do
+      let(:string) { "(+ 10 12 (* -5.5 8))" }
+
+      it { is_expected.to eq [:+, 10, 12, [:*, -5.5, 8]] }
+    end
+  end
+
   describe '#tokenize' do
     subject { tokenize string }
 

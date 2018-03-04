@@ -8,6 +8,10 @@ def read_input
   end
 end
 
+def read(s)
+  read_tokens tokenize(s)
+end
+
 def tokenize(s)
   s.gsub(/[()]/, ' \0 ').split
 end
