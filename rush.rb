@@ -26,7 +26,7 @@ def read_tokens(tokens)
   when ')'
     raise SyntaxError, 'unexpected ")"'
   else
-    token
+    atom token
   end
 end
 

@@ -40,9 +40,9 @@ describe 'Rush' do
     end
 
     context '"(" and something and ")"' do
-      let(:tokens) { ['(', '100', 'hoge', ')'] }
+      let(:tokens) { ['(', '100', '3.14', 'hoge', '$%@&^', ')'] }
 
-      it { is_expected.to eq ['100', 'hoge'] }
+      it { is_expected.to eq [100, 3.14, :hoge, :"$%@&^"] }
     end
 
     context 'raise Syntax Error' do
