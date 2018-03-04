@@ -84,6 +84,7 @@ def evaluate(x, env=$GLOBAL_ENV)
     when :define
       _, var, expr = x
       env[var] = evaluate(expr, env)
+      nil
     when :set!
       _, var, expr = x
       env.find(var)[var] = evaluate(expr, env)
