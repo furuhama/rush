@@ -31,14 +31,19 @@ def read_tokens(tokens)
 end
 
 def atom(token)
+  type_casts = [
+    lambda { |arg| Integer arg },
+    lambda { |arg| Float arg },
+    lambda { |arg| arg.to_sym },
+  ]
+
   begin
-    Integer(token)
+    type_casts.first.call(token)
   rescue ArgumentError
-    begin
-      Float(token)
-    rescue ArgumentError
-      token.to_sym
-    end
+    # remove first element of type_casts
+    # and retry this method
+    type_casts.shift
+    retry
   end
 end
 
