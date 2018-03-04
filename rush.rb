@@ -1,6 +1,6 @@
 # Rush (= Ruby Scheme Interpreter)
 
-def read
+def read_input
   loop do
     print 'rush >> '
     input = gets
@@ -13,5 +13,5 @@ def tokenize(s)
 end
 
 if __FILE__ == $0
-  read
+  read_input
 end
