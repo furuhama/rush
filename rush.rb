@@ -74,11 +74,17 @@ def evaluate(x, env=$GLOBAL_ENV)
       x
     end
   when Array
-    # evaluate recursively
-    process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
+    case x.first
+    when :quote
+      _, expr = x
+      expr
+    else
+      # evaluate recursively
+      process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
 
-    # evaluation
-    exps.inject {|m, a| process.call(m, a) }
+      # evaluation
+      exps.inject {|m, a| process.call(m, a) }
+    end
   else
     x
   end
