@@ -63,10 +63,12 @@ def atom(token)
 end
 
 # evaluation
-def evaluate(x, env=GLOBAL_ENV)
+def evaluate(x, env=$GLOBAL_ENV)
   case x
   when Symbol
     begin
+      # look for $GLOBAL_ENV hash type data
+      # and it would find accurate Proc onject
       env.find(x)[x]
     rescue NoMethodError
       x
@@ -76,8 +78,7 @@ def evaluate(x, env=GLOBAL_ENV)
     process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
 
     # evaluation
-    # (it is okay only when `process` can be convert to Proc Object)
-    exps.inject {|m, x| process.to_proc.call(m, x) }
+    exps.inject {|m, a| process.call(m, a) }
   else
     x
   end
@@ -97,11 +98,16 @@ class Env < Hash
 end
 
 def make_global_env(env)
-  env.merge!({})
+  env.merge!({
+  :+ => lambda {|x, y| x + y },
+  :- => lambda {|x, y| x - y },
+  :* => lambda {|x, y| x * y },
+  :/ => lambda {|x, y| x / y },
+  })
 end
 
 # Define Global env
-GLOBAL_ENV = make_global_env(Env.new)
+$GLOBAL_ENV = make_global_env(Env.new)
 
 if __FILE__ == $0
   interpreter
