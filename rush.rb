@@ -88,8 +88,8 @@ def evaluate(x, env=$GLOBAL_ENV)
     when :set!
       _, var, expr = x
       env.find(var)[var] = evaluate(expr, env)
-    when :lambda
-      _, var, expr = x
+    when :lambda # it does not work well
+      _, vars, expr = x
       lambda { |*args| evaluate(exp, Env.new(vars, args, env)) }
     else
       # evaluate recursively
