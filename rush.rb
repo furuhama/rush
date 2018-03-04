@@ -63,7 +63,7 @@ def atom(token)
 end
 
 # evaluation
-def evaluate(x, env={})
+def evaluate(x, env=GLOBAL_ENV)
   case x
   when Symbol
     begin
@@ -82,6 +82,26 @@ def evaluate(x, env={})
     x
   end
 end
+
+class Env < Hash
+  def initialize(params=[], args=[], outer=nil)
+    hash = Hash[params.zip(args)]
+    self.merge!(hash)
+
+    @outer = outer
+  end
+
+  def find(key)
+    self.has_key?(key) ? self : @outer.find(key)
+  end
+end
+
+def make_global_env(env)
+  env.merge!({})
+end
+
+# Define Global env
+GLOBAL_ENV = make_global_env(Env.new)
 
 if __FILE__ == $0
   interpreter
