@@ -45,6 +45,12 @@ describe 'Rush' do
       it { is_expected.to eq [100, 3.14, :hoge, :"$%@&^"] }
     end
 
+    context 'complex tokens' do
+      let(:tokens) { ['(', '(', '100', ')', '(', 'ruby', '(', 'neko', ')', ')', '3.14', ')', 'ignored'] }
+
+      it { is_expected.to eq [[100], [:ruby, [:neko]], 3.14] }
+    end
+
     context 'raise Syntax Error' do
       context 'length == 0' do
         let(:tokens) { [] }
