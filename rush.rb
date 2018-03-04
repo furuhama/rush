@@ -1,10 +1,12 @@
 # Rush (= Ruby Scheme Interpreter)
 
+# main function
 def interpreter
   loop do
     print 'rush >> '
     input = gets
 
+    # when "quit" is input, break lopp
     break if input == "quit\n"
 
     print parse(input), "\n"
@@ -12,15 +14,18 @@ def interpreter
   print "bye...\n"
 end
 
+# tokenize & parse input
 def read(s)
   read_tokens tokenize(s)
 end
 alias :parse :read
 
+# separate input words
 def tokenize(s)
   s.gsub(/[()]/, ' \0 ').split
 end
 
+# convert tokens into structured Array
 def read_tokens(tokens)
   raise SyntaxError, 'unexpected EOF while reading' if tokens.length == 0
 
@@ -39,6 +44,7 @@ def read_tokens(tokens)
   end
 end
 
+# type casting
 def atom(token)
   type_casts = [
     lambda { |arg| Integer arg },
