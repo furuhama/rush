@@ -25,4 +25,23 @@ describe 'Rush' do
       it { is_expected.to eq [':^@$"%^' ] }
     end
   end
+
+  describe '#read_tokens' do
+    subject { read_tokens tokens }
+
+    context 'length == 0' do
+      let(:tokens) { [] }
+      it { expect { subject }.to raise_error(SyntaxError) }
+    end
+
+    context 'tokens just have "("' do
+      let(:tokens) { [')'] }
+      it { expect { subject }.to raise_error(SyntaxError) }
+    end
+
+    context 'tokens start ")"' do
+      let(:tokens) { [')', '(', 'hoge', ')', ')'] }
+      it { expect { subject }.to raise_error(SyntaxError) }
+    end
+  end
 end
