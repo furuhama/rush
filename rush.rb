@@ -72,8 +72,14 @@ def evaluate(x, env={})
       x
     end
   when Array
-    process, *exps = x
+    # evaluate recursively
+    process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
+
+    # evaluation
+    # (it is okay only when `process` can be convert to Proc Object)
     exps.inject {|m, x| process.to_proc.call(m, x) }
+  else
+    x
   end
 end
 

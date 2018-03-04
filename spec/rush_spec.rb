@@ -171,10 +171,16 @@ describe 'Rush' do
       it { is_expected.to eq :hoge }
     end
 
-    context 'Single Depth Array' do
+    context 'Single Depth Array calculation' do
       let(:exps) { [:+, 1, 2, 3] }
 
       it { is_expected.to eq 6 }
+    end
+
+    context 'Multi Depth Array calculation' do
+      let(:exps) { [:+, 1, 2, [:*, 5, 10]] }
+
+      it { is_expected.to eq 53 }
     end
   end
 end
