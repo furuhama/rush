@@ -161,4 +161,20 @@ describe 'Rush' do
       end
     end
   end
+
+  describe '#evaluate' do
+    subject { evaluate exps }
+
+    context 'just a Symbol' do
+      let(:exps) { :hoge }
+
+      it { is_expected.to eq :hoge }
+    end
+
+    context 'Single Depth Array' do
+      let(:exps) { [:+, 1, 2, 3] }
+
+      it { is_expected.to eq 6 }
+    end
+  end
 end

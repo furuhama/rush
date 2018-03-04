@@ -62,6 +62,21 @@ def atom(token)
   end
 end
 
+# evaluation
+def evaluate(x, env={})
+  case x
+  when Symbol
+    begin
+      env.find(x)[x]
+    rescue NoMethodError
+      x
+    end
+  when Array
+    process, *exps = x
+    exps.inject {|m, x| process.to_proc.call(m, x) }
+  end
+end
+
 if __FILE__ == $0
   interpreter
 end
