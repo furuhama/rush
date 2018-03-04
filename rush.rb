@@ -81,6 +81,12 @@ def evaluate(x, env=$GLOBAL_ENV)
     when :if
       _, cond, if_t, if_f = x
       evaluate((evaluate(cond, env) ? if_t : if_f), env)
+    when :define
+      _, var, expr = x
+      env[var] = evaluate(expr, env)
+    when :set!
+      _, var, expr = x
+      env.find(var)[var] = evaluate(expr, env)
     else
       # evaluate recursively
       process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
