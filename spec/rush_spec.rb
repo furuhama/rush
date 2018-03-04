@@ -82,15 +82,31 @@ describe 'Rush' do
     subject { atom token }
 
     context 'Integer' do
-      let(:token) { 10 }
+      context 'positive' do
+        let(:token) { '10' }
 
-      it { is_expected.to eq 10 }
+        it { is_expected.to eq 10 }
+      end
+
+      context 'negative' do
+        let(:token) { '-65525' }
+
+        it { is_expected.to eq (-65525) }
+      end
     end
 
     context 'Float' do
-      let(:token) { 10.0 }
+      context 'positive' do
+        let(:token) { '10.37465' }
 
-      it { is_expected.to eq 10.0 }
+        it { is_expected.to eq 10.37465 }
+      end
+
+      context 'negative' do
+        let(:token) { '-172.367' }
+
+        it { is_expected.to eq (-172.367) }
+      end
     end
 
     context 'Symbol' do
