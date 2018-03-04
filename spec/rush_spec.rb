@@ -182,5 +182,17 @@ describe 'Rush' do
 
       it { is_expected.to eq 53 }
     end
+
+    context 'quote' do
+      let(:exps) { [:quote, [1, 2, [:*, 3.7, 10]]] }
+
+      it { is_expected.to eq [1, 2, [:*, 3.7, 10]] }
+    end
+
+    context 'if' do
+      let(:exps) { [:if, [:<, 10, 3], :is_true, :is_false] }
+
+      it { is_expected.to eq :is_false }
+    end
   end
 end
