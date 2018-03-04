@@ -71,4 +71,34 @@ describe 'Rush' do
       end
     end
   end
+
+  describe '#atom' do
+    subject { atom token }
+
+    context 'Integer' do
+      let(:token) { 10 }
+
+      it { is_expected.to eq 10 }
+    end
+
+    context 'Float' do
+      let(:token) { 10.0 }
+
+      it { is_expected.to eq 10.0 }
+    end
+
+    context 'Symbol' do
+      context 'normal literals' do
+        let(:token) { 'hoge' }
+
+        it { is_expected.to eq :hoge }
+      end
+
+      context 'other symbols' do
+        let(:token) { '$%@*$^' }
+
+        it { is_expected.to eq :"$%@*$^" }
+      end
+    end
+  end
 end

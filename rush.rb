@@ -30,6 +30,18 @@ def read_tokens(tokens)
   end
 end
 
+def atom(token)
+  begin
+    Integer(token)
+  rescue ArgumentError
+    begin
+      Float(token)
+    rescue ArgumentError
+      token.to_sym
+    end
+  end
+end
+
 if __FILE__ == $0
   read_input
 end
