@@ -243,4 +243,14 @@ describe 'Rush' do
       it { is_expected.to eq 15 }
     end
   end
+
+  describe '#interpret_once' do
+    subject { interpret_once input }
+
+    context do
+      let(:input) { '(if (list? (list 1 2 3)) (+ 1 2) (* 8 99))' }
+
+      it { is_expected.to eq 3 }
+    end
+  end
 end

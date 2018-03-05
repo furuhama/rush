@@ -9,7 +9,7 @@ def interpreter
     # when "quit" is input, break lopp
     break if input == "quit\n"
 
-    print parse(input), "\n"
+    print evaluate(parse(input)), "\n"
   end
   print "bye...\n"
 end
@@ -133,6 +133,11 @@ def make_global_env(env)
   :null? => lambda {|x| x.empty? },
   :symbol? => lambda {|x| x.is_a?(Symbol) },
   })
+end
+
+# just for test function
+def interpret_once(s)
+  evaluate(parse(s))
 end
 
 # Define Global env
