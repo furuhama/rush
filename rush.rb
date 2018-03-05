@@ -68,7 +68,7 @@ def evaluate(x, env=$GLOBAL_ENV)
   when Symbol
     begin
       # look for $GLOBAL_ENV hash type data
-      # and it would find accurate Proc onject
+      # and it would find accurate Proc object
       env.find(x)[x]
     # ここで rescue しちゃってるけどいいのだろうか
     rescue NoMethodError
