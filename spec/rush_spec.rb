@@ -168,48 +168,45 @@ describe 'Rush' do
     context 'just a Symbol' do
       let(:exps) { :hoge }
 
-      it { is_expected.to eq :hoge }
+      it { expect { subject }.to raise_error(NoMethodError) }
     end
 
     context 'Single Depth Array calculation' do
-      let(:exps) { [:+, 1, 2, 3] }
+      let(:exps) { [:+, 1, 2] }
 
-      it { is_expected.to eq 6 }
+      it { is_expected.to eq 3 }
     end
 
     context 'Multi Depth Array calculation' do
-      let(:exps) { [:+, 1, 2, [:*, 5, 10]] }
+      let(:exps) { [:+, 1, [:*, 5, 10]] }
 
-      it { is_expected.to eq 53 }
+      it { is_expected.to eq 51 }
     end
 
     context 'cons' do
-      let(:exps) { [:cons, 1, 2, [:*, 5, 10]] }
+      let(:exps) { [:cons, 2, [:*, 5, 10]] }
 
-      it { is_expected.to eq [[1, 2], 50] }
+      it { is_expected.to eq [2, 50] }
     end
 
     context 'car, cdr' do
-      let(:exps) { [:car, [1015]] }
+      let(:exps) { [:car, [:cons, 99, 2.5]] }
 
-      it { is_expected.to eq nil }
+      it { is_expected.to eq 99 }
     end
 
-    # 落ちる
     context 'list' do
       let(:exps) { [:list, 1, 2, 3] }
 
       it { is_expected.to eq [1, 2, 3] }
     end
 
-    # 落ちる
     context 'null?' do
-      let(:exps) { [:null?, [3]] }
+      let(:exps) { [:null?, [:list]] }
 
       it { is_expected.to eq true }
     end
 
-    # 落ちる
     context 'symbol?' do
       let(:exps) { [:symbol?, 3] }
 
@@ -226,7 +223,6 @@ describe 'Rush' do
       end
     end
 
-    # lambda うまく動いてない
     context 'lambda' do
       it do
         evaluate [:define, :square, [:lambda, [:n], [:*, :n, :n]]]
@@ -242,9 +238,9 @@ describe 'Rush' do
     end
 
     context 'if' do
-      let(:exps) { [:if, [:<, 10, 3], :is_true, :is_false] }
+      let(:exps) { [:if, [:<, 10, 3], 5, 15] }
 
-      it { is_expected.to eq :is_false }
+      it { is_expected.to eq 15 }
     end
   end
 end
