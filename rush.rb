@@ -7,11 +7,11 @@ def interpreter
     input = gets
 
     # when "quit" is input, break lopp
-    break if input == "(quit)\n"
+    break if input == "(quit)\n" || input == "(exit)\n"
 
-    print evaluate(parse(input)), "\n" unless evaluate(parse(input)).nil?
+    print '-> ', evaluate(parse(input)), "\n" unless evaluate(parse(input)).nil?
   end
-  print "bye...\n"
+  print "-> bye...\n"
 end
 
 # tokenize & parse input
