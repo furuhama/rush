@@ -44,6 +44,40 @@ def read_tokens(tokens)
   end
 end
 
+# try to allow pending in tokenize & make structured tree process
+#
+# rush >> (+ 10
+#  ... >> 15)
+# -> 25
+def re_read_tokens(tokens)
+  if tokens.length == 0
+    pend_input.each do |token|
+      tokens << token
+    end
+  end
+
+  case token = tokens.shift
+  when '('
+    l = []
+    while tokens[0] != ')'
+      l.push re_read_tokens(tokens)
+    end
+    tokens.shift
+    l
+  when ')'
+    raise SyntaxError, 'unexpected ")"'
+  else
+    atom token
+  end
+end
+
+def pend_input
+  print ' ... >> '
+  input = gets
+
+  tokenize input
+end
+
 # type casting
 def atom(token)
   type_casts = [
