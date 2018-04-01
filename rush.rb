@@ -1,12 +1,14 @@
 # Rush (= Ruby Scheme Interpreter)
 
+require 'pry'
+
 # main function
 def interpreter
   loop do
     print 'rush >> '
     input = gets
 
-    # when "quit" is input, break lopp
+    # when "(quit)" or "(exit)" is input, break lopp
     break if input == "(quit)\n" || input == "(exit)\n"
 
     print '-> ', evaluate(parse(input)), "\n" unless evaluate(parse(input)).nil?
@@ -15,10 +17,10 @@ def interpreter
 end
 
 # tokenize & parse input
-def read(s)
-  read_tokens tokenize(s)
+def parse(s)
+  # read_tokens_only tokenize(s)
+  read_tokens before_read(tokenize(s))
 end
-alias :parse :read
 
 # separate input words
 def tokenize(s)
@@ -26,9 +28,75 @@ def tokenize(s)
 end
 
 # convert tokens into structured Array
-def read_tokens(tokens)
-  raise SyntaxError, 'unexpected EOF while reading' if tokens.length == 0
+# def read_tokens(tokens)
+#   raise SyntaxError, 'unexpected EOF while reading' if tokens.length == 0
 
+#   case token = tokens.shift
+#   when '('
+#     l = []
+#     while tokens[0] != ')'
+#       l.push read_tokens(tokens)
+#     end
+#     tokens.shift
+#     l
+#   when ')'
+#     raise SyntaxError, 'unexpected ")"'
+#   else
+#     atom token
+#   end
+# end
+
+# try to allow pending in tokenize & make structured tree process
+#
+# rush >> (+ 10
+#  ... >> 15)
+# -> 25
+# def re_read_tokens(tokens)
+#   tokens = pend_input if tokens.length == 0
+
+#   case token = tokens.shift
+#   when '('
+#     l = []
+#     while tokens[0] != ')'
+#       l.push re_read_tokens(tokens)
+#     end
+#     tokens.shift
+#     l
+#   when ')'
+#     raise SyntaxError, 'unexpected ")"'
+#   else
+#     atom token
+#   end
+# end
+
+# def read_tokens_with_analysis(tokens)
+#   level = static_analysis(tokens)
+
+#   while level != 0
+#     added_tokens = pend_input
+#     level = static_analysis(added_tokens, level)
+
+#     added_tokens.each do |added_token|
+#       tokens.push added_token
+#     end
+#   end
+
+#   case token = tokens.shift
+#   when '('
+#     l = []
+#     while tokens[0] != ')'
+#       l.push read_tokens_deep(tokens)
+#     end
+#     tokens.shift
+#     l
+#   when ')'
+#     raise SyntaxError, 'unexpected ")"'
+#   else
+#     atom token
+#   end
+# end
+
+def read_tokens(tokens)
   case token = tokens.shift
   when '('
     l = []
@@ -44,31 +112,50 @@ def read_tokens(tokens)
   end
 end
 
-# try to allow pending in tokenize & make structured tree process
-#
-# rush >> (+ 10
-#  ... >> 15)
-# -> 25
-def re_read_tokens(tokens)
-  if tokens.length == 0
-    pend_input.each do |token|
-      tokens << token
+def before_read(tokens)
+  level = static_analysis(tokens)
+
+  while level != 0
+    added_tokens = pend_input
+    level = static_analysis(added_tokens, level)
+
+    added_tokens.each do |added_token|
+      tokens.push added_token
     end
   end
 
-  case token = tokens.shift
-  when '('
-    l = []
-    while tokens[0] != ')'
-      l.push re_read_tokens(tokens)
+  return tokens
+end
+
+# def read_tokens_deep(tokens)
+#   case token = tokens.shift
+#   when '('
+#     l = []
+#     while tokens[0] != ')'
+#       l.push read_tokens_deep(tokens)
+#     end
+#     tokens.shift
+#     l
+#   when ')'
+#     raise SyntaxError, 'unexpected ")"'
+#   else
+#     atom token
+#   end
+# end
+
+def static_analysis(code_tokens, level = 0)
+  code_tokens.each do |token|
+    case token
+    when '('
+      level += 1
+    when ')'
+      level -= 1
     end
-    tokens.shift
-    l
-  when ')'
-    raise SyntaxError, 'unexpected ")"'
-  else
-    atom token
   end
+
+  raise SyntaxError, 'unexpected ")"' if level < 0
+
+  return level
 end
 
 def pend_input

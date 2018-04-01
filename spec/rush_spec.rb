@@ -2,8 +2,8 @@ require 'spec_helper'
 require './rush'
 
 describe 'Rush' do
-  describe '#read' do
-    subject { read string }
+  describe '#parse' do
+    subject { parse string }
 
     context 'just symbol' do
       let(:string) { "(hoge)" }
@@ -112,6 +112,38 @@ describe 'Rush' do
         let(:tokens) { ['(', 'hoge', 'fuga', '210'] }
 
         it { expect { subject }.to raise_error(SyntaxError, "unexpected EOF while reading") }
+      end
+    end
+  end
+
+  describe '#static_analysis' do
+    subject { static_analysis(tokens, level) }
+
+    context 'given level equal 0' do
+      let(:level) { 0 }
+
+      context do
+        let(:tokens) { ['('] }
+
+        it { is_expected.to eq 1 }
+      end
+
+      context do
+        let(:tokens) { ['(', '2', ')'] }
+
+        it { is_expected.to eq 0 }
+      end
+
+      context do
+        let(:tokens) { ['(', '2', '(', ')'] }
+
+        it { is_expected.to eq 1 }
+      end
+
+      context '' do
+        let(:tokens) { ['(', '(', '2', ')', ')'] }
+
+        it { is_expected.to eq 0 }
       end
     end
   end
