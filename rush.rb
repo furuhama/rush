@@ -9,7 +9,7 @@ def interpreter
     input = gets
 
     # when "(quit)" or "(exit)" is input, break lopp
-    break if input == "(quit)\n" || input == "(exit)\n"
+    break if %w[(quit)\n (exit)\n].include? input
 
     print '-> ', evaluate(parse(input)), "\n" unless evaluate(parse(input)).nil?
   end
@@ -17,14 +17,14 @@ def interpreter
 end
 
 # tokenize & parse input
-def parse(s)
+def parse(raw_string)
   # read_tokens_only tokenize(s)
-  read_tokens before_read(tokenize(s))
+  read_tokens before_read(tokenize(raw_string))
 end
 
 # separate input words
-def tokenize(s)
-  s.gsub(/[()]/, ' \0 ').split
+def tokenize(raw_string)
+  raw_string.gsub(/[()]/, ' \0 ').split
 end
 
 # convert tokens into structured Array
@@ -100,9 +100,7 @@ def read_tokens(tokens)
   case token = tokens.shift
   when '('
     l = []
-    while tokens[0] != ')'
-      l.push read_tokens(tokens)
-    end
+    l.push read_tokens(tokens) while tokens[0] != ')'
     tokens.shift
     l
   when ')'
@@ -124,7 +122,7 @@ def before_read(tokens)
     end
   end
 
-  return tokens
+  tokens
 end
 
 # def read_tokens_deep(tokens)
@@ -155,7 +153,7 @@ def static_analysis(code_tokens, level = 0)
 
   raise SyntaxError, 'unexpected ")"' if level < 0
 
-  return level
+  level
 end
 
 def pend_input
@@ -168,9 +166,9 @@ end
 # type casting
 def atom(token)
   type_casts = [
-    lambda { |arg| Integer arg },
-    lambda { |arg| Float arg },
-    lambda { |arg| arg.to_sym },
+    ->(arg) { Integer arg },
+    ->(arg) { Float arg },
+    ->(arg) { arg.to_sym }
   ]
 
   begin
@@ -207,10 +205,10 @@ def evaluate(x, env=$GLOBAL_ENV)
       env.find(var)[var] = evaluate(expr, env)
     when :lambda
       _, vars, expr = x
-      lambda { |*args| evaluate(expr, Env.new(vars, args, env)) }
+      ->(*args) { evaluate(expr, Env.new(vars, args, env)) }
     else
       # evaluate recursively
-      process, *exps = x.inject([]) {|mem, exp| mem << evaluate(exp, env) }
+      process, *exps = x.inject([]) { |mem, exp| mem << evaluate(exp, env) }
 
       # evaluation
       process[*exps]
@@ -222,48 +220,48 @@ end
 
 # this class express which scope program is in
 class Env < Hash
-  def initialize(params=[], args=[], outer=nil)
+  def initialize(params = [], args = [], outer = nil)
     hash = Hash[params.zip(args)]
-    self.merge!(hash)
+    merge!(hash)
 
     @outer = outer
   end
 
   def find(key)
-    self.has_key?(key) ? self : @outer.find(key)
+    key?(key) ? self : @outer.find(key)
   end
 end
 
 def make_global_env(env)
-  env.merge!({
-  :+ => lambda {|x, y| x + y },
-  :- => lambda {|x, y| x - y },
-  :* => lambda {|x, y| x * y },
-  :/ => lambda {|x, y| x / y },
-  :not => lambda {|x| !x },
-  :< => lambda {|x, y| x < y },
-  :> => lambda {|x, y| x > y },
-  :<= => lambda {|x, y| x <= y },
-  :>= => lambda {|x, y| x >= y },
-  :"=" => lambda {|x, y| x == y },
-  :cons => lambda {|x, y| [x, y] },
-  :car => lambda {|x| x[0] },
-  :cdr => lambda {|x| x[1..-1] },
-  :list => lambda {|*x| [*x] },
-  :list? => lambda {|x| x.is_a?(Array) },
-  :null? => lambda {|x| x.empty? },
-  :symbol? => lambda {|x| x.is_a?(Symbol) },
-  })
+  env.merge!(
+    :+ => ->(x, y) { x + y },
+    :- => ->(x, y) { x - y },
+    :* => ->(x, y) { x * y },
+    :/ => ->(x, y) { x / y },
+    :not => ->(x) { !x },
+    :< => ->(x, y) { x < y },
+    :> => ->(x, y) { x > y },
+    :<= => ->(x, y) { x <= y },
+    :>= => ->(x, y) { x >= y },
+    :"=" => ->(x, y) { x == y },
+    :cons => ->(x, y) { [x, y] },
+    :car => ->(x) { x[0] },
+    :cdr => ->(x) { x[1..-1] },
+    :list => ->(*x) { [*x] },
+    :list? => ->(x) { x.is_a?(Array) },
+    :null? => ->(x) { x.empty? },
+    :symbol? => ->(x) { x.is_a?(Symbol) }
+  )
 end
 
 # just for test function
-def interpret_once(s)
-  evaluate(parse(s))
+def interpret_once(str)
+  evaluate(parse(str))
 end
 
 # Define Global env
 $GLOBAL_ENV = make_global_env(Env.new)
 
-if __FILE__ == $0
+if $PROGRAM_NAME == __FILE__
   interpreter
 end
